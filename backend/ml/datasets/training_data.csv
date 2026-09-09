@@ -1,0 +1,4 @@
+cvss,asset_criticality,internet_facing,exploit_active,historical_incidents,exploit_probability
+10.0,10,1,1,3,0.88
+8.8,9,1,1,2,0.72
+7.8,8,0,0,1,0.35
