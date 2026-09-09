@@ -62,3 +62,50 @@ def apply_changes(
         modified.setdefault("threat_data", {})["activity_level"] = changes.threat_activity
         
     return modified
+
+from app.schemas.what_if import WhatIfScenarioResult, ScenarioDelta
+from app.services.risk_engine.engine import quantify_scenario
+from app.services.risk_engine.exceptions import MissingImpactDataError
+from app.schemas.risk import RiskQuantificationSchema
+
+def compute_delta(
+    baseline: Dict[str, Any],
+    simulated: Dict[str, Any],
+) -> Dict[str, ScenarioDelta]:
+    metrics = ["probability", "eal", "mean_eal", "p90", "p95", "p99"]
+    delta = {}
+    for m in metrics:
+        b = float(baseline.get(m, 0.0))
+        s = float(simulated.get(m, 0.0))
+        d = round(s - b, 4)
+        pct = round((d / b * 100), 2) if b != 0.0 else 0.0
+        delta[m] = ScenarioDelta(baseline=b, simulated=s, delta=d, delta_pct=pct)
+    return delta
+
+def _describe_applied_changes(changes: WhatIfChangeset) -> Dict[str, Any]:
+    return changes.model_dump(exclude_none=True)
+
+def simulate_scenario(
+    scenario_data: Dict[str, Any],
+    changes: WhatIfChangeset,
+    data_dir: Optional[str] = None,
+) -> WhatIfScenarioResult:
+    baseline = quantify_scenario(scenario_data, data_dir=data_dir)
+    modified = apply_changes(scenario_data, changes)
+    
+    try:
+        simulated = quantify_scenario(modified, data_dir=data_dir)
+    except MissingImpactDataError as e:
+        simulated = {**baseline, "status": "impact_data_missing", "error": str(e)}
+        
+    delta = compute_delta(baseline, simulated)
+    applied = _describe_applied_changes(changes)
+    
+    return WhatIfScenarioResult(
+        scenario_id=baseline["scenario_id"],
+        scenario_name=baseline["scenario_name"],
+        baseline=RiskQuantificationSchema(**baseline),
+        simulated=RiskQuantificationSchema(**simulated),
+        delta=delta,
+        applied_changes=applied,
+    )
