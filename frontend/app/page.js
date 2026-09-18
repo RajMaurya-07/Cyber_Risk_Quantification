@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Sparkles,
   TrendingDown,
-  Lock,
   GitFork,
   PieChart,
   Bot,
