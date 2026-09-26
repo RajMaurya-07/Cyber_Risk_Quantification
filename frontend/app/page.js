@@ -212,7 +212,7 @@ const teamMembers = [
   ['Aditya Mishra', 'System Engineer', '/media/aditya.jpg'],
   ['Amrita Singh Lodhi', 'ML Engineer', '/media/amrita.jpg'],
   ['Ashutosh Parashar', 'DevOps Engineer', '/media/ashu.jpg'],
-  ['Anshika Sharma', 'Researcher', '/media/anshika.jpg'],
+  ['Anshika Sharma', 'Researcher', '/media/anshika.jpeg'],
 ];
 
 const downloadSteps = [
