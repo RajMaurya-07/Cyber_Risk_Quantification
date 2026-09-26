@@ -6,8 +6,8 @@ import QueryProvider from '../providers/QueryProvider';
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark h-full">
-      <body className="bg-[#080C14] text-slate-200 font-sans antialiased h-full flex flex-col min-h-screen overflow-x-hidden select-none">
+    <html lang="en" className="h-full">
+      <body className="h-full min-h-screen overflow-x-hidden bg-[#F1F6F9] font-sans text-slate-900 antialiased select-none">
         <QueryProvider>
           <AppLayout>{children}</AppLayout>
         </QueryProvider>

@@ -195,7 +195,7 @@ export default function OptimizerPage() {
         </Card>
 
         {/* Hero Recommended Portfolio Box */}
-        <div className="p-5 rounded-2xl bg-gradient-to-r from-cyan-950/60 via-slate-900 to-blue-950/60 border border-cyan-500/40 shadow-2xl shadow-cyan-950/30 space-y-4">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-[0_6px_24px_rgba(15,23,42,0.045)] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyan-800/40 pb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">

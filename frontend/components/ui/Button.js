@@ -12,19 +12,19 @@ export default function Button({
   type = 'button',
 }) {
   const baseStyle =
-    'inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#080C14] disabled:opacity-50 disabled:cursor-not-allowed select-none';
+    'inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed select-none';
 
   const variants = {
     primary:
-      'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-950/40 focus:ring-cyan-500 border border-cyan-500/30',
+      'bg-cyan-500 hover:bg-cyan-600 text-white shadow-[0_4px_14px_rgba(6,182,212,0.18)] focus:ring-cyan-500 border border-cyan-500 hover:border-cyan-600',
     secondary:
-      'bg-slate-800 hover:bg-slate-700 text-slate-200 focus:ring-slate-600 border border-slate-700',
+      'bg-white hover:bg-slate-50 text-slate-700 focus:ring-slate-300 border border-slate-200',
     outline:
-      'bg-transparent hover:bg-slate-800/60 text-slate-300 hover:text-white border border-slate-700 focus:ring-slate-600',
+      'bg-white hover:bg-cyan-50 text-slate-700 hover:text-cyan-700 border border-slate-300 hover:border-cyan-300 focus:ring-cyan-200',
     danger:
-      'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/40 focus:ring-red-500 border border-red-500/30',
+      'bg-red-50 hover:bg-red-100 text-red-700 focus:ring-red-200 border border-red-200',
     success:
-      'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/40 focus:ring-emerald-500 border border-emerald-500/30',
+      'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 focus:ring-emerald-200 border border-emerald-200',
   };
 
   const sizes = {

@@ -13,7 +13,7 @@ export default function AppLayout({ children }) {
   if (isHomePage) {
     return (
       <RiskProvider>
-        <div className="min-h-screen bg-[#05070A] text-slate-100 font-sans">
+        <div className="min-h-screen bg-white text-slate-900 font-sans">
           {children}
         </div>
       </RiskProvider>
@@ -22,11 +22,11 @@ export default function AppLayout({ children }) {
 
   return (
     <RiskProvider>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-white text-slate-900">
         <Sidebar />
-        <div className="flex-1 flex flex-col min-w-0 bg-[#080C14]">
+        <div className="flex-1 flex flex-col min-w-0 bg-white">
           <Header />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-white">
             {children}
           </main>
         </div>
