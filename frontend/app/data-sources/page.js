@@ -155,29 +155,6 @@ export default function DataSourcesPage() {
       subtitle="Upload the organization-specific data used by the risk calculations."
     >
       <div className="space-y-6">
-        <Card
-          title="Calculation source"
-          subtitle="Choose which dataset the backend should use for subsequent risk calculations."
-        >
-          <div className="flex flex-wrap gap-2">
-            {[
-              ['uploaded', 'Uploaded dataset'],
-              ['supabase-primary', 'Primary Supabase'],
-              ['supabase-secondary', 'Secondary Supabase'],
-            ].map(([mode, label]) => (
-              <Button
-                key={mode}
-                variant={selectedMode === mode ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => activateSource(mode)}
-                disabled={isChangingSource}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-          <p role="status" className="mt-3 text-xs text-slate-500">{sourceMessage}</p>
-        </Card>
 
         <Card
           title="Upload a customer dataset"
