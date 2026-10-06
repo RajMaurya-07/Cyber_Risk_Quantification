@@ -241,14 +241,14 @@ const downloadSteps = [
     icon: Shield,
   },
   {
-    title: 'Build RiskNexus CLI',
-    commands: ['cd cli', 'go build -o risknexus .', 'sudo install -m 0755 risknexus /usr/local/bin/risknexus', 'cd ..'],
+    title: 'Build & Run RiskNexus CLI',
+    commands: ['cd cli', 'go build -o risknexus .', 'sudo install -m 0755 risknexus /usr/local/bin/risknexus', 'sudo ./risknexus --debug start'],
     icon: Server,
   },
   {
     title: 'Configure RiskNexus',
     description: 'The Gemini API key is entered interactively using hidden/password input.',
-    commands: ['risknexus configure'],
+    commands: ['cd ..','risknexus configure'],
     info: ['RiskNexus host/IP', 'MySQL host', 'MySQL port', 'MySQL database', 'MySQL username', 'MySQL password', 'Gemini API key'],
     icon: Database,
   },
@@ -496,7 +496,7 @@ export default function RiskNexusLandingPage() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Link href="/data-sources" className="inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100">
+            <Link href="/signup" className="inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100">
               Get Started
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -515,7 +515,7 @@ export default function RiskNexusLandingPage() {
                   {item.label}
                 </a>
               ))}
-              <Link href="/data-sources" className="mt-2 inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-sm font-semibold text-white">
+              <Link href="/signup" className="mt-2 inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-sm font-semibold text-white">
                 Get Started
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -547,7 +547,7 @@ export default function RiskNexusLandingPage() {
                   <div className="hero-subtitle mt-5 text-lg text-slate-700 sm:text-2xl md:text-3xl">Quantify Cyber Risk. Prioritize What Matters.</div>
 
                   <div className="hero-cta mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                    <Link href="/data-sources" className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_35px_rgba(34,211,238,0.2)] transition hover:bg-cyan-400">
+                    <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_35px_rgba(34,211,238,0.2)] transition hover:bg-cyan-400">
                       Get Started
                       <ArrowRight className="h-4 w-4" />
                     </Link>

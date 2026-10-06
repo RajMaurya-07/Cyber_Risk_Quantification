@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Search, Bell, Clock, RefreshCw, Shield, Sparkles } from 'lucide-react';
+import { Search, Bell, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '../../providers/AuthProvider';
 
 export default function Header() {
+  const { user } = useAuth();
+  const initials = user?.name?.trim().split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'U';
+
   return (
     <header className="h-14 bg-white/85 backdrop-blur-xl border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20 font-sans shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
       <div className="flex items-center gap-4 flex-1 max-w-xl">
@@ -32,8 +36,12 @@ export default function Header() {
           <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400"></span>
         </button>
 
-        <div className="w-8 h-8 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-xs font-bold text-cyan-700">
-          RM
+        <div
+          title={user ? `${user.name} · ${user.email}` : 'Signed in user'}
+          aria-label={user ? `${user.name}, ${user.email}` : 'Signed in user'}
+          className="w-8 h-8 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-xs font-bold text-cyan-700"
+        >
+          {initials}
         </div>
       </div>
     </header>

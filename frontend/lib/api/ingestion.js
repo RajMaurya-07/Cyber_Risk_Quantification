@@ -5,9 +5,5 @@ export async function getDatasets() {
 }
 
 export async function uploadDataset(formData) {
-  return apiClient.post('/ingestion/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  return apiClient.post('/ingestion/upload', formData);
 }

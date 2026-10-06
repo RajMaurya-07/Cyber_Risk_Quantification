@@ -1,11 +1,13 @@
 # app/services/ingestion/service.py
 
 import os
-import shutil
 import uuid
-import zipfile
+from io import BytesIO
 import logging
+from pathlib import Path
 from typing import Dict, Any, List, Optional
+
+import pandas as pd
 from fastapi import UploadFile
 
 logger = logging.getLogger(__name__)
@@ -17,44 +19,75 @@ REQUIRED_CSV_FILES = [
     "assets.csv",
     "vulnerabilities.csv",
     "asset_relationships.csv",
+    "business_services.csv",
     "controls.csv",
+    "control_status.csv",
+    "control_effectiveness.csv",
     "threat_scenarios.csv",
+    "threat_asset_impacts.csv",
 ]
+OPTIONAL_CSV_FILES = [
+    "asset_type_mapping.csv",
+    "business_units.csv",
+    "relationship_weights.csv",
+    "vulnerability_threat_rules.csv",
+]
+MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024
+ALLOWED_DATA_FILES = {Path(filename).stem for filename in REQUIRED_CSV_FILES + OPTIONAL_CSV_FILES}
 
 
 def save_customer_dataset(files: List[UploadFile]) -> Dict[str, Any]:
     """
-    Saves uploaded customer CSV files into a new dataset folder under backend/data/uploads/{dataset_id}/.
-    Validates presence of required schema files and returns dataset summary metadata.
+    Saves uploaded CSV or XLSX inputs to canonical CSV filenames in an isolated dataset folder.
     """
+    if not files:
+        raise ValueError("No files uploaded.")
+
     dataset_id = f"ds_{uuid.uuid4().hex[:8]}"
     target_dir = os.path.join(UPLOADS_DIR, dataset_id)
     os.makedirs(target_dir, exist_ok=True)
-
     saved_files = []
-    for file in files:
-        filename = os.path.basename(file.filename)
-        dest_path = os.path.join(target_dir, filename)
+    seen_stems = set()
+    try:
+        for file in files:
+            raw_filename = (file.filename or "").replace("\\", "/").rsplit("/", 1)[-1]
+            filename = Path(raw_filename)
+            stem = filename.stem.lower()
+            extension = filename.suffix.lower()
+            if stem not in ALLOWED_DATA_FILES or extension not in {".csv", ".xlsx"}:
+                raise ValueError(
+                    f"Unsupported file '{raw_filename}'. Use a supported dataset filename with .csv or .xlsx."
+                )
+            if stem in seen_stems:
+                raise ValueError(f"Only one file can be uploaded for {stem}.csv.")
+            seen_stems.add(stem)
 
-        if filename.endswith(".zip"):
-            # Handle zip upload
-            temp_zip = os.path.join(target_dir, "temp.zip")
-            with open(temp_zip, "wb") as buffer:
-                shutil.copyfileobj(file.file, buffer)
-            with zipfile.ZipFile(temp_zip, "r") as zip_ref:
-                zip_ref.extractall(target_dir)
-            os.remove(temp_zip)
-            saved_files.append(filename)
-        elif filename.endswith(".csv"):
-            with open(dest_path, "wb") as buffer:
-                shutil.copyfileobj(file.file, buffer)
-            saved_files.append(filename)
+            contents = file.file.read(MAX_UPLOAD_SIZE_BYTES + 1)
+            if len(contents) > MAX_UPLOAD_SIZE_BYTES:
+                raise ValueError(f"{raw_filename} exceeds the 50 MB file size limit.")
 
-    # Check extracted/saved files
-    existing_files = os.listdir(target_dir)
-    missing_required = [f for f in REQUIRED_CSV_FILES if f not in existing_files]
+            dest_path = os.path.join(target_dir, f"{stem}.csv")
+            if extension == ".csv":
+                with open(dest_path, "wb") as output:
+                    output.write(contents)
+            else:
+                try:
+                    dataframe = pd.read_excel(BytesIO(contents), engine="openpyxl")
+                except Exception as error:
+                    raise ValueError(f"Could not read Excel file '{raw_filename}': {error}") from error
+                dataframe.to_csv(dest_path, index=False)
+            saved_files.append(f"{stem}.csv")
 
-    status = "ready" if not missing_required else "partially_valid"
+        existing_files = os.listdir(target_dir)
+        missing_required = [filename for filename in REQUIRED_CSV_FILES if filename not in existing_files]
+        status = "ready" if not missing_required else "partially_valid"
+    except Exception:
+        for filename in os.listdir(target_dir):
+            path = os.path.join(target_dir, filename)
+            if os.path.isfile(path):
+                os.remove(path)
+        os.rmdir(target_dir)
+        raise
 
     return {
         "status": "success",
@@ -69,14 +102,7 @@ def save_customer_dataset(files: List[UploadFile]) -> Dict[str, Any]:
 
 def list_datasets() -> List[Dict[str, Any]]:
     """Lists all ingested datasets available on the backend."""
-    datasets = [
-        {
-            "dataset_id": "default",
-            "name": "Default Ground Truth Dataset",
-            "path": DATA_BASE_DIR,
-            "is_default": True,
-        }
-    ]
+    datasets = []
 
     if os.path.exists(UPLOADS_DIR):
         for sub in os.listdir(UPLOADS_DIR):

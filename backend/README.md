@@ -18,7 +18,7 @@ uvicorn app.main:app --reload --port 8000
 
 ## Data Source Modes
 
-The default `sample` mode continues to use the checked-in CSV dataset. The additional Supabase modes load canonical tables into a private backend cache and reuse the existing CSV-compatible risk engine.
+Risk calculations are disabled until a customer data source is active. The checked-in CSV files are not used as an implicit default or as a calculation fallback. A complete customer file upload activates the `uploaded` mode. The optional Supabase modes load canonical tables into a private backend cache and reuse the existing CSV-compatible risk engine.
 
 Set these Hugging Face Space variables for one or both Supabase connections:
 

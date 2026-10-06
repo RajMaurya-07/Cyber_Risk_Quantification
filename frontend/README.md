@@ -1,4 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is the Next.js frontend for RiskNexus.
+
+## Local setup
+
+Copy `.env.example` to `.env.local` and configure:
+
+- `NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1` for the local FastAPI service.
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for server-side account storage. The service-role key must never use a `NEXT_PUBLIC_` prefix or be exposed to the browser.
+- `AUTH_SECRET` as a private random value of at least 32 characters for signing the session cookie.
+
+Apply the SQL files in `../supabase/migrations/` to the Supabase project. The frontend manages signup and login itself: passwords are scrypt-hashed by the server and user records are stored in `public.app_users`. It does not use Supabase Auth.
+
+Run the FastAPI backend from the `../backend/` directory with:
+
+```bash
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+If the browser reports 404 for every `/api/v1/...` request, verify that `NEXT_PUBLIC_API_URL` points to this FastAPI service and that its `/docs` page opens at `http://localhost:8000/docs`. Confirm that RiskNexus, not another application, is listening on that port.
+
+## Run the frontend
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in a browser.
 
 ## Getting Started
 

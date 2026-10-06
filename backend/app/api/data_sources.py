@@ -14,9 +14,11 @@ class DataSourceRunRequest(BaseModel):
 
 @router.get("/status")
 def data_source_status() -> Dict[str, Any]:
+    active_mode = get_active_mode()
     return {
-        "active_mode": get_active_mode(),
-        "modes": [get_mode_status(mode) for mode in ("sample", "supabase-primary", "supabase-secondary")],
+        "active_mode": active_mode,
+        "calculations_enabled": active_mode in {"uploaded", "supabase-primary", "supabase-secondary"},
+        "modes": [get_mode_status(mode) for mode in ("sample", "uploaded", "supabase-primary", "supabase-secondary")],
     }
 
 

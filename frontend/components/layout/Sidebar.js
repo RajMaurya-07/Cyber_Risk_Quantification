@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -14,17 +14,27 @@ import {
   PieChart,
   Bot,
   FileCheck,
-  FileText,
-  Database,
   Settings,
   Building2,
   ChevronRight,
-  ShieldCheck,
   BarChart3,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../providers/AuthProvider';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
+  const [signOutError, setSignOutError] = useState('');
+  const initials = user?.name?.trim().split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'U';
+  const handleSignOut = async () => {
+    setSignOutError('');
+    try {
+      await signOut();
+    } catch (error) {
+      setSignOutError(error.message);
+    }
+  };
 
   const navItems = [
     { label: 'Data Sources', href: '/data-sources', icon: LayoutDashboard },
@@ -107,15 +117,25 @@ export default function Sidebar() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
         </div>
 
-        <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
+        <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white transition-colors">
           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-100 to-cyan-200 border border-cyan-200 flex items-center justify-center text-xs font-bold text-cyan-700">
-            RM
+            {initials}
           </div>
           <div className="truncate flex-1">
-            <p className="text-[11px] font-medium text-slate-800 truncate">Raj Maurya</p>
-            <p className="text-[10px] text-slate-500 truncate">Chief Risk Officer (CISO)</p>
+            <p className="text-[11px] font-medium text-slate-800 truncate">{user?.name || 'Signed-in user'}</p>
+            <p className="text-[10px] text-slate-500 truncate">{user?.email || 'Loading account…'}</p>
           </div>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            aria-label="Sign out"
+            title="Sign out"
+            className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-red-600"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </button>
         </div>
+        {signOutError && <p role="alert" className="px-2 text-[10px] text-red-600">{signOutError}</p>}
       </div>
     </aside>
   );

@@ -3,19 +3,23 @@ const API_BASE_URL =
 
 export async function fetchAPI(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const config = {
+    ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...options.headers,
     },
-    ...options,
   };
 
   try {
     const response = await fetch(url, config);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `API error (${response.status}): ${response.statusText}`);
+      const message = response.status === 404
+        ? `RiskNexus API route not found at ${url}. Check NEXT_PUBLIC_API_URL and make sure the RiskNexus FastAPI backend is running.`
+        : errorData.detail || `API error (${response.status}): ${response.statusText}`;
+      throw new Error(message);
     }
     return await response.json();
   } catch (error) {
@@ -35,7 +39,7 @@ export const apiClient = {
   post: (endpoint, body = {}) => {
     return fetchAPI(endpoint, {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: typeof FormData !== 'undefined' && body instanceof FormData ? body : JSON.stringify(body),
     });
   },
 };
